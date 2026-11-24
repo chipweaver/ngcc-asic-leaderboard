@@ -1,0 +1,5 @@
+// HMAC-SM3 constant-key midstates (algorithm constants):
+// K1MID = SM3 compress(IV, key ^ ipad), K2MID = SM3 compress(IV, key ^ opad),
+// key = SM3("3.14159265358979") || SM3("2.71828182845904") (auxfunc.c).
+localparam logic [255:0] K1MID_C = 256'h313EB6A448BEF2D536E50983D44B6BAB9F2008548371A799073ED128D0A8DD79;
+localparam logic [255:0] K2MID_C = 256'h747CC75DE966127AA24AC00F62AB5C3F1DD5568D84C3306505FFF7C2B97F411A;

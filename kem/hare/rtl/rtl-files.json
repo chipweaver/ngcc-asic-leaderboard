@@ -1,0 +1,21 @@
+{
+  "files": [
+    "src/hare_pkg.sv",
+    "src/sram_sp.sv",
+    "src/obj_buf.sv",
+    "src/buf_port.sv",
+    "src/sm3_core2.sv",
+    "src/hc_stream.sv",
+    "src/xof_engine.sv",
+    "src/sampler.sv",
+    "src/dwriter.sv",
+    "src/bcopy.sv",
+    "src/mul_engine.sv",
+    "src/kr_rm_units.sv",
+    "src/ostage.sv",
+    "src/rm_dec.sv",
+    "src/rs_unit.sv",
+    "src/hare_kem_top.sv"
+  ],
+  "incdirs": []
+}

@@ -1,0 +1,104 @@
+{
+  "algorithm": "ZEN",
+  "version": "performance",
+  "ngcc_round": 1,
+  "conditions": {
+    "process": "90 nm",
+    "frequency_mhz": 160,
+    "sram_model": "CACTI 90 nm"
+  },
+  "area_kge": {
+    "logic": 1553.1,
+    "sram": 343.3,
+    "total": 1896.4
+  },
+  "parameter_sets": [
+    {
+      "name": "ZEN_128",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 615,
+        "sk": 1303,
+        "ct": 512,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 964.9,
+          "n": 60
+        },
+        "encaps": {
+          "mean": 830.0,
+          "n": 60
+        },
+        "decaps": {
+          "mean": 810.0,
+          "n": 60
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "ZEN_256",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1229,
+        "sk": 2605,
+        "ct": 1024,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1592.5,
+          "n": 60
+        },
+        "encaps": {
+          "mean": 1462.0,
+          "n": 60
+        },
+        "decaps": {
+          "mean": 1529.0,
+          "n": 60
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "ZEN_512",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2458,
+        "sk": 5210,
+        "ct": 2048,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 3634.5,
+          "n": 60
+        },
+        "encaps": {
+          "mean": 3057.0,
+          "n": 60
+        },
+        "decaps": {
+          "mean": 3388.0,
+          "n": 60
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    }
+  ]
+}

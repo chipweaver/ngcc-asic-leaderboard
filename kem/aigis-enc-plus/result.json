@@ -1,0 +1,104 @@
+{
+  "algorithm": "Aigis-Enc+",
+  "version": "performance",
+  "ngcc_round": 1,
+  "conditions": {
+    "process": "90 nm",
+    "frequency_mhz": 160,
+    "sram_model": "CACTI 90 nm"
+  },
+  "area_kge": {
+    "logic": 1841.7,
+    "sram": 572.0,
+    "total": 2413.6
+  },
+  "parameter_sets": [
+    {
+      "name": "Aigis-Enc+-I",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 656,
+        "sk": 1456,
+        "ct": 896,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 794.11,
+          "n": 123
+        },
+        "encaps": {
+          "mean": 790.0,
+          "n": 123
+        },
+        "decaps": {
+          "mean": 741.0,
+          "n": 203
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "Aigis-Enc+-II",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1312,
+        "sk": 2912,
+        "ct": 1664,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1381.44,
+          "n": 123
+        },
+        "encaps": {
+          "mean": 1413.0,
+          "n": 123
+        },
+        "decaps": {
+          "mean": 1289.0,
+          "n": 203
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "Aigis-Enc+-III",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2624,
+        "sk": 5824,
+        "ct": 3584,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 2782.45,
+          "n": 123
+        },
+        "encaps": {
+          "mean": 2898.0,
+          "n": 123
+        },
+        "decaps": {
+          "mean": 2578.0,
+          "n": 203
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "algorithm": "QUBE",
+  "version": "performance",
+  "ngcc_round": 1,
+  "conditions": {
+    "process": "90 nm",
+    "frequency_mhz": 160,
+    "sram_model": "CACTI 90 nm"
+  },
+  "area_kge": {
+    "logic": 1113.1,
+    "sram": 2073.4,
+    "total": 3186.6
+  },
+  "parameter_sets": [
+    {
+      "name": "QUBE-128",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 3294,
+        "sk": 3326,
+        "ct": 3287,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1852.96,
+          "n": 49
+        },
+        "encaps": {
+          "mean": 2389.58,
+          "n": 52
+        },
+        "decaps": {
+          "mean": 2414.66,
+          "n": 62
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "QUBE-192",
+      "level": 192,
+      "sizes_bytes": {
+        "pk": 6364,
+        "sk": 6412,
+        "ct": 6362,
+        "ss": 24
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 3901.88,
+          "n": 42
+        },
+        "encaps": {
+          "mean": 4941.07,
+          "n": 41
+        },
+        "decaps": {
+          "mean": 4977.65,
+          "n": 54
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "QUBE-256",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 10446,
+        "sk": 10510,
+        "ct": 10423,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 6973.64,
+          "n": 45
+        },
+        "encaps": {
+          "mean": 8451.36,
+          "n": 44
+        },
+        "decaps": {
+          "mean": 8504.11,
+          "n": 56
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "QUBE-384",
+      "level": 384,
+      "sizes_bytes": {
+        "pk": 20738,
+        "sk": 20834,
+        "ct": 20633,
+        "ss": 48
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 16384.76,
+          "n": 42
+        },
+        "encaps": {
+          "mean": 18931.36,
+          "n": 42
+        },
+        "decaps": {
+          "mean": 19337.62,
+          "n": 53
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "QUBE-512",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 34028,
+        "sk": 34156,
+        "ct": 33846,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 31992.61,
+          "n": 51
+        },
+        "encaps": {
+          "mean": 34605.13,
+          "n": 52
+        },
+        "decaps": {
+          "mean": 39622.59,
+          "n": 64
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    }
+  ]
+}

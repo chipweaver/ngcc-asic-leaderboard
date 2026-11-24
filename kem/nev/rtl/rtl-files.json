@@ -1,0 +1,33 @@
+{
+ "files": [
+  "src/nev_pkg.sv",
+  "src/nev_palu_pkg.sv",
+  "src/nev_sram_1rw.sv",
+  "src/nev_sram_1rw_be.sv",
+  "src/nev_sram_1r1w.sv",
+  "src/nev_rst_sync.sv",
+  "src/nev_objmem.sv",
+  "src/nev_pbuf.sv",
+  "src/nev_lane.sv",
+  "src/nev_rom_tw.sv",
+  "src/nev_rom_y.sv",
+  "src/nev_rom_yk.sv",
+  "src/nev_rom_twq.sv",
+  "src/nev_palu.sv",
+  "src/nev_pseq.sv",
+  "src/nev_sm3_core.sv",
+  "src/nev_hash_ce.sv",
+  "src/nev_hash.sv",
+  "src/nev_samp_coef.sv",
+  "src/nev_samp_tern.sv",
+  "src/nev_sampler.sv",
+  "src/nev_codec_enc5.sv",
+  "src/nev_codec_dec5.sv",
+  "src/nev_codec.sv",
+  "src/nev_seq.sv",
+  "src/nev_kem_top.sv"
+ ],
+ "incdirs": [
+  "src"
+ ]
+}

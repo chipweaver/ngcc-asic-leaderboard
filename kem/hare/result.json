@@ -1,0 +1,133 @@
+{
+  "algorithm": "HARE",
+  "version": "performance",
+  "ngcc_round": 1,
+  "conditions": {
+    "process": "90 nm",
+    "frequency_mhz": 160,
+    "sram_model": "CACTI 90 nm"
+  },
+  "area_kge": {
+    "logic": 782.7,
+    "sram": 1168.1,
+    "total": 1950.8
+  },
+  "parameter_sets": [
+    {
+      "name": "HARE-128",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 2629,
+        "sk": 2677,
+        "ct": 4688,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 2711.17,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 4221.33,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 4344.63,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "HARE-256",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 6580,
+        "sk": 6676,
+        "ct": 11790,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 6977.1,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 12123.67,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 13326.03,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "HARE-384",
+      "level": 384,
+      "sizes_bytes": {
+        "pk": 13157,
+        "sk": 13301,
+        "ct": 23693,
+        "ss": 48
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 16220.27,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 29604.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 34681.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "HARE-512",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 21812,
+        "sk": 22004,
+        "ct": 39294,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 31539.47,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 59240.4,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 73150.4,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    }
+  ]
+}

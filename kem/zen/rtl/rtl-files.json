@@ -1,0 +1,29 @@
+{
+  "files": [
+    "src/zen_sram_macros.sv",
+    "src/zen_sm3_core.sv",
+    "src/zen_hash_asm.sv",
+    "src/zen_hash_sys.sv",
+    "src/zen_ntt_twrom.sv",
+    "src/zen_ntt_bf.sv",
+    "src/zen_ntt_comm.sv",
+    "src/zen_fci.sv",
+    "src/zen_ntt.sv",
+    "src/zen_bre_rom.sv",
+    "src/zen_bre_tab.sv",
+    "src/zen_bre_lane.sv",
+    "src/zen_bre.sv",
+    "src/zen_gf2.sv",
+    "src/zen_sampler.sv",
+    "src/zen_pku_div769.sv",
+    "src/zen_pku.sv",
+    "src/zen_pass.sv",
+    "src/zen_polymem.sv",
+    "src/zen_objmem.sv",
+    "src/zen_ctrl.sv",
+    "src/zen_kem_top.sv"
+  ],
+  "incdirs": [
+    "src"
+  ]
+}

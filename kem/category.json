@@ -1,0 +1,107 @@
+{
+  "id": "kem",
+  "ops": [
+    {
+      "id": "keygen",
+      "zh": "密钥生成",
+      "en": "KeyGen"
+    },
+    {
+      "id": "encaps",
+      "zh": "封装",
+      "en": "Encaps"
+    },
+    {
+      "id": "decaps",
+      "zh": "解封装",
+      "en": "Decaps"
+    }
+  ],
+  "operation": [
+    "keygen",
+    "encaps",
+    "decaps"
+  ],
+  "sizes": [
+    {
+      "id": "pk",
+      "zh": "公钥",
+      "en": "Public key"
+    },
+    {
+      "id": "sk",
+      "zh": "私钥",
+      "en": "Private key"
+    },
+    {
+      "id": "ct",
+      "zh": "密文",
+      "en": "Ciphertext"
+    },
+    {
+      "id": "ss",
+      "zh": "封装密钥",
+      "en": "Shared secret"
+    }
+  ],
+  "levels": [
+    128,
+    256,
+    384,
+    512
+  ],
+  "show_p95": false,
+  "text": {
+    "zh": {
+      "doc": "密钥封装算法 · NGCC ASIC 排行榜",
+      "title": [
+        "密钥封装算法"
+      ],
+      "tagline": "新一代商用密码算法征集活动（NGCC）密钥封装候选算法的 ASIC 实现，在统一工艺与工作频率下比较运算吞吐量和面积。",
+      "method": [
+        [
+          "运算吞吐量",
+          "单位时间内完成的运算次数（ops/s）。本榜将一次密钥生成、一次封装和一次解封装计为一次运算，对应一次使用临时密钥对的密钥建立：运算吞吐量 = f ÷（密钥生成、封装、解封装的平均时钟周期数之和），f = {freq} MHz。展开行列出各操作的时钟周期数和运算延迟，均为多次运行的平均值。"
+        ],
+        [
+          "面积与吞面比",
+          "面积为综合后逻辑面积与 SRAM 面积之和，以工艺库二输入与非门（NAND2）的面积归一化为 NAND2 等效门数，单位 kGE（千门）。吞面比 = 运算吞吐量 ÷ NAND2 等效门数，单位 ops/s/kGE。"
+        ],
+        [
+          "分组与排名",
+          "按 NGCC 规定的经典安全强度等级（128、256、512 比特，以及可选的 384 比特）分组，仅在同一等级内比较，名次按运算吞吐量排列。同一算法在同一等级下有多个参数集时，列出运算吞吐量最高的参数集，其余参数集见展开行。"
+        ],
+        [
+          "评估环境",
+          "指标定义参照商用密码标准研究院《新一代商用密码算法 ASIC 实现自评估指引》（2026 年 6 月）。工艺为 {process}，各实现在 {freq} MHz 下均通过静态时序分析。与指引的差异：工作频率固定为 {freq} MHz，未进行频率扫描；SRAM 面积由 {sram} 估算，未使用工艺库存储宏单元。因此数值仅适用于本榜内部比较。"
+        ]
+      ]
+    },
+    "en": {
+      "doc": "Key Encapsulation · NGCC ASIC Leaderboard",
+      "title": [
+        "KEY",
+        "ENCAPSULATION"
+      ],
+      "tagline": "ASIC implementations of the key encapsulation candidates in the Next-generation Commercial Cryptographic Algorithms Program (NGCC), compared on throughput and area under a common process and clock frequency.",
+      "method": [
+        [
+          "Throughput",
+          "Operations completed per second (ops/s). One operation here is one key generation, one encapsulation and one decapsulation, which together form one key establishment with an ephemeral key pair: throughput = f ÷ (sum of the mean clock cycles of KeyGen, Encaps and Decaps), with f = {freq} MHz. The expanded row lists per-operation clock cycles and latency, both averaged over repeated runs."
+        ],
+        [
+          "Area and throughput / area",
+          "Area is post-synthesis logic area plus SRAM area, normalized to NAND2 gate equivalents by the area of the library's two-input NAND gate, and given in kGE. Throughput / area = throughput ÷ NAND2 gate equivalents, in ops/s/kGE."
+        ],
+        [
+          "Grouping and ranking",
+          "Implementations are grouped by the NGCC classical security strength levels (128, 256 and 512 bits, plus the optional 384 bits) and compared only within the same level, ranked by throughput. When an algorithm has several parameter sets at one level, the one with the highest throughput is listed and the others are given in its expanded row."
+        ],
+        [
+          "Evaluation environment",
+          "Metric definitions follow the ICCS ASIC self-evaluation guide for next-generation commercial cryptographic algorithms (新一代商用密码算法 ASIC 实现自评估指引, June 2026). Process: {process}; every implementation passes static timing analysis at {freq} MHz. Differences from the guide: the clock frequency is fixed at {freq} MHz with no frequency sweep, and SRAM area is a {sram} estimate rather than a foundry memory macro, so the numbers are comparable only within this leaderboard."
+        ]
+      ]
+    }
+  }
+}

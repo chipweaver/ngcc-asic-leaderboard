@@ -1,0 +1,21 @@
+{
+ "files": [
+  "src/qube_pkg.sv",
+  "src/qube_sram.sv",
+  "src/qube_sm3_core.sv",
+  "src/qube_xof_farm.sv",
+  "src/qube_sampler.sv",
+  "src/qube_lane.sv",
+  "src/qube_hash.sv",
+  "src/qube_objbuf.sv",
+  "src/qube_hload.sv",
+  "src/qube_mover.sv",
+  "src/qube_rsenc.sv",
+  "src/qube_rmdec.sv",
+  "src/qube_rsdec.sv",
+  "src/qube_rst_sync.sv",
+  "src/qube_ctrl.sv",
+  "src/qube_perf_top.sv"
+ ],
+ "incdirs": []
+}

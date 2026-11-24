@@ -1,0 +1,25 @@
+{
+ "files": [
+  "src/aigis_pkg.sv",
+  "src/aigis_ctrl_pkg.sv",
+  "src/aigis_sram.sv",
+  "src/aigis_modmul.sv",
+  "src/aigis_sm3_core.sv",
+  "src/aigis_sm3_chan.sv",
+  "src/aigis_drng_q.sv",
+  "src/aigis_noise.sv",
+  "src/aigis_pool.sv",
+  "src/aigis_hsu.sv",
+  "src/aigis_objmem.sv",
+  "src/aigis_polymem.sv",
+  "src/aigis_ntt.sv",
+  "src/aigis_mac.sv",
+  "src/aigis_wpass.sv",
+  "src/aigis_stream.sv",
+  "src/aigis_cp.sv",
+  "src/aigis_rst_sync.sv",
+  "src/aigis_ctrl.sv",
+  "src/aigis_perf_top.sv"
+ ],
+ "incdirs": []
+}

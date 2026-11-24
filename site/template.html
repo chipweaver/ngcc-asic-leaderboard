@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NGCC KEM 硬件榜</title>
+<script>
+  // apply the saved theme before first paint
+  try { const t = localStorage.getItem('ngcc-lb-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+/*FONTS*/
+:root {
+  color-scheme: light;
+  --bg: #ffffff; --fg: #09090b; --fg-2: #3f3f46; --muted: #71717b;
+  --border: #e4e4e7; --soft: #f4f4f5; --hover: #fafafa;
+  --dim: #a1a1aa; --op1: #18181b; --op2: #71717b; --op3: #d4d4d8;
+  --mono: "Fragment Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", monospace;
+  --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #09090b; --fg: #fafafa; --fg-2: #d4d4d8; --muted: #9f9fa9;
+    --border: #2e2e2e; --soft: #27272a; --hover: #131316;
+    --dim: #52525c; --op1: #fafafa; --op2: #9f9fa9; --op3: #52525c;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #09090b; --fg: #fafafa; --fg-2: #d4d4d8; --muted: #9f9fa9;
+  --border: #2e2e2e; --soft: #27272a; --hover: #131316;
+  --dim: #52525c; --op1: #fafafa; --op2: #9f9fa9; --op3: #52525c;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.6 var(--mono); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---- nav ---- */
+nav.top { border-bottom: 1px solid var(--border); }
+nav.top .wrap { height: 56px; display: flex; align-items: center; gap: 32px; }
+.brand { font-size: 14px; letter-spacing: .02em; text-decoration: none; white-space: nowrap; }
+.links { display: flex; gap: 26px; flex: 1; align-self: stretch; align-items: stretch; }
+.links a, .links span { display: flex; align-items: center; font-size: 13px; text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+.links a { color: var(--muted); }
+.links a:hover { color: var(--fg); }
+.links a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--fg); }
+.links span { color: var(--dim); cursor: default; }
+.disc { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.ctrls { display: flex; align-items: center; gap: 10px; }
+.group { display: inline-flex; border: 1px solid var(--border); padding: 2px; gap: 2px; }
+.group button { border: 0; background: transparent; padding: 3px 9px; font-size: 12px; color: var(--muted); cursor: pointer; line-height: 20px; display: inline-flex; align-items: center; }
+.group button:hover { color: var(--fg); }
+.group button[aria-pressed="true"], .group button[aria-selected="true"] { background: var(--soft); color: var(--fg); }
+.group.icons button { padding: 3px 6px; }
+.group svg { display: block; }
+button:focus-visible, a:focus-visible, tr.row:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; }
+
+/* ---- hero ---- */
+header.hero { text-align: center; padding: 72px 0 52px; }
+h1 { font-family: var(--mono); font-weight: 400; font-size: 60px; line-height: 1.15; letter-spacing: -.02em; margin: 0 0 14px; }
+.tagline { color: var(--muted); font-size: 15px; margin: 0 auto; max-width: 46em; }
+.cond { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+.cta { display: flex; justify-content: center; gap: 10px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; font-size: 13px; text-decoration: none; border: 1px solid transparent; }
+.btn.primary { background: var(--fg); color: var(--bg); }
+.btn.primary:hover { opacity: .88; }
+.btn.ghost { background: var(--soft); color: var(--fg); }
+.btn.ghost:hover { border-color: var(--border); }
+
+/* ---- toolbar ---- */
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.toolbar .lab { color: var(--muted); font-size: 12px; letter-spacing: .04em; margin-right: 10px; }
+.toolbar .left { display: flex; align-items: center; flex-wrap: wrap; }
+.lv small { color: var(--muted); margin-left: 6px; font-size: 11px; }
+.lv[aria-selected="true"] small { color: var(--fg-2); }
+
+/* ---- board ---- */
+.frame { border: 1px solid var(--border); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { height: 48px; padding: 0 16px; text-align: left; white-space: nowrap; }
+thead th { height: 46px; font-weight: 400; font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--fg); border-bottom: 1px solid var(--border); }
+thead th .u { color: var(--muted); text-transform: none; letter-spacing: 0; margin-left: 4px; }
+th.r, td.r { text-align: right; }
+th.c, td.c { text-align: center; }
+th button { border: 0; background: none; padding: 0; cursor: pointer; text-transform: inherit; letter-spacing: inherit; }
+th button::after { content: " ↕"; color: var(--dim); }
+th[aria-sort="descending"] button::after { content: " ↓"; color: var(--fg); }
+th[aria-sort="ascending"] button::after { content: " ↑"; color: var(--fg); }
+tbody tr.row { border-top: 1px solid var(--border); cursor: pointer; }
+tbody tr.row:first-child { border-top: 0; }
+tbody tr.row:hover, tbody tr.row[aria-expanded="true"] { background: var(--hover); }
+td.rank { width: 80px; color: var(--fg-2); }
+td.name .ps { color: var(--muted); font-size: 12.5px; margin-left: 6px; }
+.tp { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.tp .v { min-width: 6ch; text-align: right; }
+.bar { width: 160px; height: 10px; background: var(--soft); flex: none; }
+.bar i { display: block; height: 100%; background: var(--fg); }
+td.r { color: var(--fg-2); }
+td.chev { width: 44px; padding: 0 14px 0 0; color: var(--muted); }
+td.chev svg { display: block; margin-left: auto; transition: transform .15s; }
+tr.row[aria-expanded="true"] td.chev svg { transform: rotate(180deg); }
+
+/* ---- detail ---- */
+tr.detail > td { height: auto; padding: 6px 16px 26px 96px; background: var(--hover); white-space: normal; }
+.dgrid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
+.dgrid h4 { margin: 0 0 10px; font-weight: 400; font-size: 11.5px; letter-spacing: .04em; color: var(--muted); }
+.share { display: flex; gap: 2px; height: 6px; margin: 4px 0 10px; }
+.share i { display: block; }
+.ops { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ops th, .ops td { height: 28px; padding: 0 0 0 14px; border: 0; font-size: 12px; white-space: nowrap; }
+.ops th { color: var(--muted); text-transform: none; letter-spacing: 0; height: 24px; }
+.ops th:first-child, .ops td:first-child { padding-left: 0; }
+.ops td { font-size: 13px; color: var(--fg-2); }
+.ops td:first-child { color: var(--fg); }
+.ops .key { display: inline-block; width: 8px; height: 8px; margin-right: 8px; vertical-align: 0; }
+.kv { margin: 0; font-size: 13px; }
+.kv div { display: flex; justify-content: space-between; gap: 16px; max-width: 280px; line-height: 2; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; color: var(--fg-2); }
+.kv .tot dd, .kv .tot dt { color: var(--fg); }
+.dgrid .gap { margin-top: 18px; }
+.dim { color: var(--muted); font-size: 12.5px; }
+.go { display: inline-block; margin-top: 14px; font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--border); }
+.go:hover { border-color: var(--fg); }
+
+/* ---- pareto ---- */
+.pareto { position: relative; padding: 24px 24px 12px; }
+.pareto svg { display: block; width: 100%; overflow: visible; }
+.pareto text { font-family: var(--mono); fill: var(--muted); font-size: 12px; }
+.pareto .grid { stroke: var(--border); }
+.pareto .base { stroke: var(--dim); }
+.pareto .front { stroke: var(--fg); stroke-width: 1.5; fill: none; }
+.pareto .pt { stroke: var(--bg); stroke-width: 2; }
+.pareto .pt.on { fill: var(--fg); }
+.pareto .pt.off { fill: var(--dim); }
+.pareto .lab { fill: var(--fg); font-size: 12.5px; }
+.pareto .lab.off { fill: var(--muted); }
+.pareto .hit { fill: transparent; }
+.pnote { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+.empty { padding: 64px 24px; text-align: center; color: var(--muted); }
+.tip { position: absolute; left: 0; top: 0; pointer-events: none; background: var(--bg); border: 1px solid var(--border);
+  padding: 8px 12px; font-size: 12.5px; opacity: 0; transition: opacity .1s; white-space: nowrap; }
+.tip b { display: block; font-weight: 400; color: var(--fg); }
+.tip span { color: var(--muted); }
+
+/* ---- method ---- */
+section.method { margin-top: 88px; border-top: 1px solid var(--border); padding-top: 40px; }
+h2 { font-weight: 400; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 24px; }
+.mgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 56px; }
+.mgrid h3 { font-weight: 400; font-size: 14px; margin: 0 0 6px; }
+.mgrid p { margin: 0; font-family: var(--sans); font-size: 14.5px; line-height: 1.7; color: var(--fg-2); }
+footer { margin-top: 72px; border-top: 1px solid var(--border); }
+footer .wrap { padding-top: 20px; padding-bottom: 32px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer a { color: var(--muted); }
+
+@media (max-width: 860px) {
+  .bar { width: 96px; }
+  tr.detail > td { padding-left: 24px; }
+  .dgrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  nav.top .wrap { height: auto; flex-wrap: wrap; gap: 0 16px; padding-top: 12px; }
+  .ctrls { margin-left: auto; gap: 6px; }
+  .brand { font-size: 12.5px; }
+  .group button { padding: 3px 7px; }
+  .group.icons button { padding: 3px 5px; }
+  .links { order: 3; flex-basis: 100%; gap: 22px; overflow-x: auto; height: 42px; margin-top: 6px; scrollbar-width: none; }
+  header.hero { padding: 48px 0 36px; }
+  h1 { font-size: 34px; }
+  .tagline { font-size: 14px; }
+  body { font-size: 13px; }
+  th, td { padding: 0 4px; }
+  th:first-child, td:first-child { padding-left: 8px; }
+  th:last-child, td:last-child { padding-right: 8px; }
+  thead th { font-size: 10.5px; text-transform: none; letter-spacing: 0; white-space: normal; line-height: 1.25; padding-top: 6px; padding-bottom: 6px; }
+  thead th button { text-align: inherit; }
+  thead th.c { white-space: nowrap; }
+  tbody tr.row td { font-size: 12.5px; }
+  th button::after { content: ""; }
+  th[aria-sort] button::after { content: " ↓"; }
+  th[aria-sort="ascending"] button::after { content: " ↑"; }
+  td.rank { width: 30px; }
+  .bar, td.chev, th.chev { display: none; }
+  thead th .u { display: none; }
+  td.name .ps { display: block; margin-left: 0; font-size: 11.5px; line-height: 1.2; }
+  tr.detail > td { padding: 6px 12px 20px; }
+  .dgrid, .mgrid { grid-template-columns: 1fr; gap: 22px; }
+  .pareto { padding: 14px 8px 8px; }
+}
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="#" data-i="brand"></a>
+    <div class="links" id="cats"></div>
+    <div class="ctrls">
+      <div class="group" role="group" aria-label="Language">
+        <button data-lang="zh">中文</button><button data-lang="en">EN</button>
+      </div>
+      <div class="group icons" role="group" id="theme">
+        <button data-theme="light"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M3 13l1.1-1.1M11.9 4.1 13 3"/></svg></button>
+        <button data-theme="dark"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13.5 10.2A5.8 5.8 0 0 1 5.8 2.5a5.8 5.8 0 1 0 7.7 7.7z"/></svg></button>
+        <button data-theme="system"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.8" y="2.5" width="12.4" height="8.6"/><path d="M5.5 14h5M8 11.1V14"/></svg></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header class="hero">
+    <h1 id="title"></h1>
+    <p class="tagline" id="tagline"></p>
+    <p class="cond" id="cond"></p>
+    <p class="disc" data-i="disc"></p>
+    <div class="cta">
+      <a class="btn primary" href="#method" data-i="ctaMethod"></a>
+      <a class="btn ghost" href="data.json" download data-i="ctaData"></a>
+    </div>
+  </header>
+
+  <section id="board">
+    <div class="toolbar">
+      <div class="left"><span class="lab" data-i="level"></span><div class="group" role="tablist" id="levels"></div></div>
+      <div class="group" role="tablist" id="views">
+        <button role="tab" data-view="table" data-i="viewTable"></button><button role="tab" data-view="pareto" data-i="viewPareto"></button>
+      </div>
+    </div>
+    <div class="frame" id="frame"></div>
+  </section>
+
+  <section class="method" id="method">
+    <h2 data-i="methodTitle"></h2>
+    <div class="mgrid" id="mgrid"></div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span id="foot"></span></div></footer>
+
+<script>
+const D = /*DATA*/null;
+const M = D.meta, LV = Object.keys(D.levels);
+// category configuration (operations, size fields, texts) and the site's category list [id, has results, names]
+const C = D.config, OPS = C.ops.map(o => [o.id, o.en]), CAT = D.cat, CATS = D.cats;
+// placeholders in the category texts: {freq} {process} {sram}
+const fill = s => s.replace(/\{(freq|process|sram)\}/g, (_, k) => M[k]);
+const nf = (x, d = 0) => x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nm = s => s.replace(/(\d)nm/g, '$1 nm');
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+const T = {
+  zh: {
+    brand: 'NGCC ASIC 排行榜', noResult: '暂无结果',
+    disc: 'chipweaver 独立评估，非 ICCS 官方结果',
+    cond: ['性能优化版', M.process, `${M.freq} MHz`, `生成于 ${M.date}`],
+    ctaMethod: '评估方法 ↓', ctaData: '下载数据 →',
+    level: '经典安全强度等级（比特）', viewTable: '表格', viewPareto: '帕累托图',
+    rank: '名次', alg: '算法', tput: '运算吞吐量', area: '面积', tpa: '吞面比', eff: '能效比',
+    ops: '核心操作', cycles: '时钟周期数', p95: 'P95', n: '样本数', lat: '运算延迟 ns', pw: '总功耗 mW',
+    areaH: '综合后面积（kGE）', logic: '逻辑', sram: 'SRAM（CACTI 估算）', total: '合计',
+    sizes: '尺寸（字节）', param: '参数集', others: '同等级其他参数集', impl: '查看实现 →',
+    better: '↖ 更优', xAxis: '面积 kGE →',
+    pnote: '左上方为更优。实线连接帕累托前沿上的实现，即不存在面积更小且运算吞吐量更高的其他实现。',
+    few: n => `该安全强度等级下仅有 ${n} 个实现，不绘制帕累托图。`,
+    methodTitle: '评估方法',
+    foot: `数据：<a href="data.json">data.json</a> · 生成于 ${M.date}`,
+    themeT: { light: '浅色', dark: '深色', system: '跟随系统' },
+  },
+  en: {
+    brand: 'NGCC ASIC Leaderboard', noResult: 'No results yet',
+    disc: 'Independent evaluation by chipweaver; not an official ICCS result',
+    cond: ['Performance-optimized version', M.process, `${M.freq} MHz`, `generated ${M.date}`],
+    ctaMethod: 'Methodology ↓', ctaData: 'Download data →',
+    level: 'CLASSICAL SECURITY STRENGTH (BITS)', viewTable: 'TABLE', viewPareto: 'PARETO',
+    rank: 'Rank', alg: 'Algorithm', tput: 'Throughput', area: 'Area', tpa: 'Throughput / area', eff: 'Energy efficiency',
+    ops: 'CORE OPERATIONS', cycles: 'Clock cycles', p95: 'P95', n: 'Samples', lat: 'Latency ns', pw: 'Total power mW',
+    areaH: 'POST-SYNTHESIS AREA kGE', logic: 'Logic', sram: 'SRAM (CACTI estimate)', total: 'Total',
+    sizes: 'SIZES bytes', param: 'PARAMETER SET', others: 'Other parameter sets at this level', impl: 'View implementation →',
+    better: '↖ better', xAxis: 'Area kGE →',
+    pnote: 'Upper left is better. The line connects the implementations on the Pareto front: for each of them, no other implementation has both smaller area and higher throughput.',
+    few: n => `Only ${n} implementation${n > 1 ? 's' : ''} at this security strength; no Pareto plot.`,
+    methodTitle: 'Methodology',
+    foot: `Data: <a href="data.json">data.json</a> · generated ${M.date}`,
+    themeT: { light: 'Light', dark: 'Dark', system: 'System' },
+  },
+};
+
+const saved = store.get('ngcc-lb-lang');
+let lang = saved === 'zh' || saved === 'en' ? saved : (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+let level = LV[0], view = 'table', sortKey = 'tput', asc = false, open = null;
+const t = () => T[lang], ct = () => C.text[lang];
+
+/* ---------- language & theme ---------- */
+function applyLang() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.title = ct().doc;
+  document.querySelectorAll('[data-i]').forEach(el => { el.textContent = t()[el.dataset.i]; });
+  document.getElementById('cats').innerHTML = CATS.map(([k, live, names]) => k === CAT
+      ? `<a href="./" aria-current="page">${esc(names[lang])}</a>`
+      : live ? `<a href="../${k}/">${esc(names[lang])}</a>` : `<span title="${esc(t().noResult)}">${esc(names[lang])}</span>`).join('');
+  document.getElementById('tagline').textContent = ct().tagline;
+  document.getElementById('title').innerHTML = ct().title.map(w => `<span style="white-space:nowrap">${esc(w)}</span>`).join(' ');
+  document.getElementById('cond').innerHTML = t().cond.map(c => `<span style="white-space:nowrap">${esc(c)}</span>`).join(' · ');
+  document.getElementById('foot').innerHTML = t().foot;
+  document.getElementById('mgrid').innerHTML = ct().method.map(([h, p]) => `<div><h3>${esc(h)}</h3><p>${esc(fill(p))}</p></div>`).join('');
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  document.querySelectorAll('#theme button').forEach(b => { b.title = t().themeT[b.dataset.theme]; b.setAttribute('aria-label', b.title); });
+  board();
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { lang = b.dataset.lang; store.set('ngcc-lb-lang', lang); applyLang(); });
+
+function applyTheme(m) {
+  if (m === 'system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = m;
+  document.querySelectorAll('#theme button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === m)));
+}
+document.querySelectorAll('#theme button').forEach(b => b.onclick = () => {
+  store.set('ngcc-lb-theme', b.dataset.theme); applyTheme(b.dataset.theme); if (view === 'pareto') board();
+});
+applyTheme(document.documentElement.dataset.theme || 'system');
+
+/* ---------- toolbar ---------- */
+function toolbar() {
+  const box = document.getElementById('levels');
+  box.innerHTML = '';
+  LV.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.className = 'lv'; b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', String(l === level)); b.tabIndex = l === level ? 0 : -1;
+    b.innerHTML = `${l}<small>${D.levels[l].length}</small>`;
+    b.onclick = () => { level = l; open = null; board(); };
+    b.onkeydown = e => {
+      const j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+      if (j >= 0 && j < LV.length) { level = LV[j]; open = null; board(); box.children[j].focus(); }
+    };
+    box.appendChild(b);
+  });
+  document.querySelectorAll('#views button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === view)));
+}
+document.querySelectorAll('#views button').forEach(b => b.onclick = () => { view = b.dataset.view; board(); });
+
+/* ---------- table ---------- */
+const CHEV = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+
+function detail(r) {
+  const L = t(), total = OPS.reduce((s, [k]) => s + r.cyc[k], 0);
+  const share = OPS.map(([k], i) => `<i style="flex:${r.cyc[k] / total};background:var(--op${i + 1})" title="${esc(C.ops[i][lang])} ${nf(100 * r.cyc[k] / total)}%"></i>`).join('');
+  const rows = OPS.map(([k], i) => `<tr><td><span class="key" style="background:var(--op${i + 1})"></span>${esc(C.ops[i][lang])}</td>
+      <td class="r num">${nf(Math.round(r.cyc[k]))}</td>${C.show_p95 ? `<td class="r num">${nf(Math.round(r.p95[k]))}</td><td class="r num">${nf(r.n[k])}</td>` : ''}<td class="r num">${nf(r.cyc[k] / M.freq * 1000)}</td>
+      <td class="r num">${r.power[k] == null ? '—' : nf(r.power[k], 1)}</td></tr>`).join('');
+  const sz = C.sizes.filter(z => r.sizes[z.id] != null).map(z => `<div><dt>${esc(z[lang])}</dt><dd class="num">${nf(r.sizes[z.id])}</dd></div>`).join('');
+  return `<div class="dgrid">
+    <div><h4>${L.ops}</h4><div class="share" aria-hidden="true">${share}</div>
+      <table class="ops"><tr><th></th><th class="r">${L.cycles}</th>${C.show_p95 ? `<th class="r">${L.p95}</th><th class="r">${L.n}</th>` : ''}<th class="r">${L.lat}</th><th class="r">${L.pw}</th></tr>${rows}</table></div>
+    <div><h4>${L.areaH}</h4><dl class="kv">
+        <div><dt>${L.logic}</dt><dd class="num">${nf(r.area.logic)}</dd></div>
+        <div><dt>${L.sram}</dt><dd class="num">${nf(r.area.sram)}</dd></div>
+        <div class="tot"><dt>${L.total}</dt><dd class="num">${nf(r.area.total)}</dd></div></dl>
+      ${sz ? `<h4 class="gap">${L.sizes}</h4><dl class="kv">${sz}</dl>` : ''}</div>
+    <div><h4>${L.param}</h4><div>${esc(r.param)}</div>
+      ${r.alts.length ? `<div class="dim" style="margin-top:6px">${L.others}: ${r.alts.map(esc).join(', ')}</div>` : ''}
+      <a class="go" href="${D.repo}/tree/main/${CAT}/${encodeURIComponent(r.slug)}/rtl">${L.impl}</a></div>
+  </div>`;
+}
+
+function table(frame) {
+  const L = t(), data = D.levels[level];
+  data.forEach((r, i) => r.rank = i + 1);                  // payload arrives sorted by KEM throughput
+  const top = Math.max(...data.map(r => r.tput));
+  const val = (r, k) => r[k] ?? -Infinity;
+  const rows = data.slice().sort((a, b) => asc ? val(a, sortKey) - val(b, sortKey) : val(b, sortKey) - val(a, sortKey));
+  const hasEff = data.some(r => r.eff != null);
+  const th = (key, label, unit, ascDefault, sortable = true) => !sortable
+    ? `<th class="r">${label}<span class="u">${unit}</span></th>`
+    : `<th class="r" data-key="${key}"${sortKey === key ? ` aria-sort="${asc ? 'ascending' : 'descending'}"` : ''}><button data-asc="${ascDefault ? 1 : ''}">${label}<span class="u">${unit}</span></button></th>`;
+  frame.innerHTML = `<table><thead><tr><th class="c">${L.rank}</th><th>${L.alg}</th>
+      ${th('tput', L.tput, 'ops/s')}${th('kge', L.area, 'kGE', true)}${th('tpa', L.tpa, 'ops/s/kGE')}${th('eff', L.eff, 'ops/s/mW', false, hasEff)}<th class="chev"></th></tr></thead><tbody></tbody></table>`;
+  const tb = frame.querySelector('tbody');
+  for (const r of rows) {
+    const id = r.alg, isOpen = open === id;
+    const tr = document.createElement('tr');
+    tr.className = 'row'; tr.tabIndex = 0; tr.setAttribute('aria-expanded', String(isOpen));
+    tr.innerHTML = `<td class="rank c num">${r.rank}</td>
+      <td class="name">${esc(r.alg)}${r.short ? `<span class="ps">(${esc(r.short)})</span>` : ''}</td>
+      <td class="r"><div class="tp"><span class="v num" style="color:var(--fg)">${nf(r.tput)}</span><div class="bar"><i style="width:${(100 * r.tput / top).toFixed(1)}%"></i></div></div></td>
+      <td class="r num">${nf(r.kge)}</td>
+      <td class="r num">${nf(r.tpa, 1)}</td>
+      <td class="r num">${r.eff == null ? '—' : nf(r.eff, 1)}</td>
+      <td class="chev">${CHEV}</td>`;
+    const toggle = () => { open = isOpen ? null : id; board(); document.querySelector('tr.row[aria-expanded="true"]')?.focus(); };
+    tr.onclick = toggle;
+    tr.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };
+    tb.appendChild(tr);
+    if (isOpen) { const d = document.createElement('tr'); d.className = 'detail'; d.innerHTML = `<td colspan="7">${detail(r)}</td>`; tb.appendChild(d); }
+  }
+  frame.querySelectorAll('th[data-key] button').forEach(b => b.onclick = () => {
+    const k = b.parentElement.dataset.key;
+    if (sortKey === k) asc = !asc; else { sortKey = k; asc = !!b.dataset.asc; }
+    board();
+  });
+}
+
+/* ---------- pareto ---------- */
+function ticks(lo, hi, n) {
+  const raw = (hi - lo) / n, mag = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+  const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step;
+  return { a, b, t: Array.from({ length: Math.round((b - a) / step) + 1 }, (_, i) => a + i * step) };
+}
+const kfmt = v => v >= 1000 ? `${nf(v / 1000)}K` : nf(v);
+
+function pareto(frame) {
+  const L = t(), pts = D.levels[level];
+  if (pts.length < 3) { frame.innerHTML = `<div class="empty">${L.few(pts.length)}</div>`; return; }
+  frame.innerHTML = `<div class="pareto"><svg role="img" aria-label="Pareto"></svg><div class="tip"></div><p class="pnote">${L.pnote}</p></div>`;
+  const box = frame.querySelector('.pareto'), svg = box.querySelector('svg'), tip = box.querySelector('.tip');
+  const W = svg.clientWidth || 1100, H = W < 520 ? 280 : 420;
+  const Lm = 56, R = 20, Tm = 36, B = 46;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('height', H);
+  const xs = pts.map(p => p.kge), ys = pts.map(p => p.tput);
+  const xr = Math.max(...xs) - Math.min(...xs) || Math.max(...xs);
+  const gx = ticks(Math.max(0, Math.min(...xs) - xr * .18), Math.max(...xs) + xr * .18, W < 520 ? 3 : 6);
+  const gy = ticks(0, Math.max(...ys) * 1.12, 4);
+  const X = v => Lm + (v - gx.a) / (gx.b - gx.a) * (W - Lm - R);
+  const Y = v => H - B - (v - gy.a) / (gy.b - gy.a) * (H - Tm - B);
+  let s = '';
+  for (const v of gy.t) s += `<line class="${v === 0 ? 'base' : 'grid'}" x1="${Lm}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${Lm - 10}" y="${Y(v) + 4}" text-anchor="end">${kfmt(v)}</text>`;
+  for (const v of gx.t) s += `<text x="${X(v)}" y="${H - B + 20}" text-anchor="middle">${nf(v)}</text>`;
+  s += `<text x="${W - R}" y="${H - 6}" text-anchor="end">${L.xAxis}</text><text x="${Lm - 10}" y="${Tm - 20}" text-anchor="end">ops/s</text>`;
+  s += `<text x="${Lm + 10}" y="${Tm + 16}">${L.better}</text>`;
+  const front = pts.slice().sort((a, b) => a.kge - b.kge)
+    .reduce((f, p) => (!f.length || p.tput > f[f.length - 1].tput) ? [...f, p] : f, []);
+  if (front.length > 1) s += `<polyline class="front" points="${front.map(p => `${X(p.kge)},${Y(p.tput)}`).join(' ')}"/>`;
+  // labels: first spot that clears the other points, placed labels and plot edges; else the least crowded one
+  const P = pts.map(p => ({ p, x: X(p.kge), y: Y(p.tput), on: front.includes(p) }));
+  const boxes = P.map(q => ({ x0: q.x - 8, x1: q.x + 8, y0: q.y - 8, y1: q.y + 8 }));
+  const hit = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+  const spots = [[0, 24, 'middle'], [0, -14, 'middle'], [13, 4, 'start'], [-13, 4, 'end'], [10, 20, 'start'], [-10, 20, 'end'], [10, -10, 'start'], [-10, -10, 'end']];
+  P.forEach((q, i) => {
+    s += `<circle class="pt ${q.on ? 'on' : 'off'}" cx="${q.x}" cy="${q.y}" r="${q.on ? 6 : 5}"/>`;
+    const w = [...q.p.alg].length * 7.8, h = 14;
+    let pick = null, best = Infinity;
+    for (const sp of spots) {
+      const x0 = sp[2] === 'middle' ? q.x + sp[0] - w / 2 : sp[2] === 'start' ? q.x + sp[0] : q.x + sp[0] - w;
+      const bb = { x0, x1: x0 + w, y0: q.y + sp[1] - h + 3, y1: q.y + sp[1] + 3 };
+      const n = boxes.filter((b, j) => j !== i && hit(b, bb)).length + (bb.x0 >= Lm && bb.x1 <= W - R && bb.y0 >= Tm - 4 && bb.y1 <= H - B ? 0 : 10);
+      if (n < best) { best = n; pick = [sp, bb]; }
+      if (n === 0) break;
+    }
+    boxes.push(pick[1]);
+    s += `<text class="lab ${q.on ? '' : 'off'}" x="${q.x + pick[0][0]}" y="${q.y + pick[0][1]}" text-anchor="${pick[0][2]}">${esc(q.p.alg)}</text>`;
+    s += `<circle class="hit" data-i="${i}" cx="${q.x}" cy="${q.y}" r="16"/>`;
+  });
+  svg.innerHTML = s;
+  svg.querySelectorAll('.hit').forEach(c => {
+    c.onpointerenter = () => {
+      const p = pts[+c.dataset.i];
+      tip.innerHTML = `<b>${esc(p.alg)}${p.short ? ` (${esc(p.short)})` : ''}</b><span>${nf(p.tput)} ops/s · ${nf(p.kge)} kGE</span>`;
+      const bx = box.getBoundingClientRect(), sx = svg.getBoundingClientRect();
+      const px = +c.getAttribute('cx') + sx.left - bx.left, py = +c.getAttribute('cy') + sx.top - bx.top;
+      tip.style.left = Math.max(8, Math.min(px + 14, bx.width - tip.offsetWidth - 8)) + 'px';
+      tip.style.top = Math.max(8, py - tip.offsetHeight - 12) + 'px';
+      tip.style.opacity = 1;
+    };
+    c.onpointerleave = () => { tip.style.opacity = 0; };
+  });
+}
+
+function board() {
+  toolbar();
+  const frame = document.getElementById('frame');
+  view === 'table' ? table(frame) : pareto(frame);
+}
+let rz; addEventListener('resize', () => { if (view === 'pareto') { clearTimeout(rz); rz = setTimeout(board, 100); } });
+applyLang();
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+{
+  "algorithm": "NEV",
+  "version": "performance",
+  "ngcc_round": 1,
+  "conditions": {
+    "process": "90 nm",
+    "frequency_mhz": 160,
+    "sram_model": "CACTI 90 nm"
+  },
+  "area_kge": {
+    "logic": 1460.9,
+    "sram": 588.4,
+    "total": 2049.3
+  },
+  "parameter_sets": [
+    {
+      "name": "NEV-C1",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 615,
+        "sk": 1246,
+        "ct": 615,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1106.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 775.3,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 589.3,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-C2",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1229,
+        "sk": 2490,
+        "ct": 1229,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1865.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 1529.47,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 1170.47,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-C3",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2458,
+        "sk": 4980,
+        "ct": 2458,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 3872.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 3076.03,
+          "n": 32
+        },
+        "decaps": {
+          "mean": 2523.03,
+          "n": 32
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-C1-c",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 615,
+        "sk": 1246,
+        "ct": 512,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1134.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 728.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 681.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-C2-c",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1229,
+        "sk": 2490,
+        "ct": 1024,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1909.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 1411.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 1266.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-C3-c",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2458,
+        "sk": 4980,
+        "ct": 2048,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 3948.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 2960.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 2682.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-D1",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 768,
+        "sk": 1552,
+        "ct": 768,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1280.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 943.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 649.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-D2",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1536,
+        "sk": 3104,
+        "ct": 1536,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 2042.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 1727.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 1194.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-D3",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 3072,
+        "sk": 6208,
+        "ct": 3072,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 4165.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 3384.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 2501.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-R1",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 672,
+        "sk": 1360,
+        "ct": 672,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1241.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 773.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 576.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-R2",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1344,
+        "sk": 2720,
+        "ct": 1344,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 2104.0,
+          "n": 30
+        },
+        "encaps": {
+          "mean": 1511.0,
+          "n": 30
+        },
+        "decaps": {
+          "mean": 1202.0,
+          "n": 30
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "NEV-R3",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2688,
+        "sk": 5440,
+        "ct": 2688,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 4570.19,
+          "n": 32
+        },
+        "encaps": {
+          "mean": 3270.52,
+          "n": 31
+        },
+        "decaps": {
+          "mean": 2853.52,
+          "n": 31
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    }
+  ]
+}
