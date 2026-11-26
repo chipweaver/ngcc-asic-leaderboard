@@ -2,9 +2,9 @@
   "algorithm": "Aigis-Enc+",
   "version": "performance",
   "ngcc_round": 1,
+  "frequency_mhz": 160,
   "conditions": {
     "process": "90 nm",
-    "frequency_mhz": 160,
     "sram_model": "CACTI 90 nm"
   },
   "area_kge": {

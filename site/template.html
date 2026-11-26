@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NGCC KEM 硬件榜</title>
+<title>/*TITLE*/</title>
 <script>
   // apply the saved theme before first paint
   try { const t = localStorage.getItem('ngcc-lb-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
@@ -84,22 +84,23 @@ h1 { font-family: var(--mono); font-weight: 400; font-size: 60px; line-height: 1
 .frame { border: 1px solid var(--border); overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
 th, td { height: 48px; padding: 0 16px; text-align: left; white-space: nowrap; }
-thead th { height: 46px; font-weight: 400; font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--fg); border-bottom: 1px solid var(--border); }
-thead th .u { color: var(--muted); text-transform: none; letter-spacing: 0; margin-left: 4px; }
+thead th { height: 58px; line-height: 1.45; font-weight: 400; font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--fg); border-bottom: 1px solid var(--border); }
+thead th .u { display: block; color: var(--muted); text-transform: none; letter-spacing: 0; }
 th.r, td.r { text-align: right; }
 th.c, td.c { text-align: center; }
 th button { border: 0; background: none; padding: 0; cursor: pointer; text-transform: inherit; letter-spacing: inherit; }
-th button::after { content: " ↕"; color: var(--dim); }
-th[aria-sort="descending"] button::after { content: " ↓"; color: var(--fg); }
-th[aria-sort="ascending"] button::after { content: " ↑"; color: var(--fg); }
+th button .u::after { content: " ↕"; color: var(--dim); }
+th[aria-sort="descending"] button .u::after { content: " ↓"; color: var(--fg); }
+th[aria-sort="ascending"] button .u::after { content: " ↑"; color: var(--fg); }
 tbody tr.row { border-top: 1px solid var(--border); cursor: pointer; }
 tbody tr.row:first-child { border-top: 0; }
 tbody tr.row:hover, tbody tr.row[aria-expanded="true"] { background: var(--hover); }
 td.rank { width: 80px; color: var(--fg-2); }
 td.name .ps { color: var(--muted); font-size: 12.5px; margin-left: 6px; }
+td.name .fq { display: none; }
 .tp { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 .tp .v { min-width: 6ch; text-align: right; }
-.bar { width: 160px; height: 10px; background: var(--soft); flex: none; }
+.bar { width: 128px; height: 10px; background: var(--soft); flex: none; }
 .bar i { display: block; height: 100%; background: var(--fg); }
 td.r { color: var(--fg-2); }
 td.chev { width: 44px; padding: 0 14px 0 0; color: var(--muted); }
@@ -182,6 +183,7 @@ footer a { color: var(--muted); }
   thead th { font-size: 10.5px; text-transform: none; letter-spacing: 0; white-space: normal; line-height: 1.25; padding-top: 6px; padding-bottom: 6px; }
   thead th button { text-align: inherit; }
   thead th.c { white-space: nowrap; }
+  thead th[data-key="freq"] { word-break: keep-all; }
   tbody tr.row td { font-size: 12.5px; }
   th button::after { content: ""; }
   th[aria-sort] button::after { content: " ↓"; }
@@ -190,9 +192,18 @@ footer a { color: var(--muted); }
   .bar, td.chev, th.chev { display: none; }
   thead th .u { display: none; }
   td.name .ps { display: block; margin-left: 0; font-size: 11.5px; line-height: 1.2; }
+  td.name .fq { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.2; }
+  td.freq, th[data-key="freq"] { display: none; }
+  html[lang="en"] thead th { font-size: 9.5px; }
   tr.detail > td { padding: 6px 12px 20px; }
   .dgrid, .mgrid { grid-template-columns: 1fr; gap: 22px; }
+  .ops th { white-space: normal; height: auto; line-height: 1.25; padding-bottom: 4px; vertical-align: bottom; }
+  .ops th, .ops td { padding-left: 10px; }
   .pareto { padding: 14px 8px 8px; }
+}
+@media (max-width: 370px) {
+  tbody tr.row td { font-size: 11.5px; }
+  td.name { white-space: normal; }
 }
 </style>
 </head>
@@ -249,8 +260,8 @@ const D = /*DATA*/null;
 const M = D.meta, LV = Object.keys(D.levels);
 // category configuration (operations, size fields, texts) and the site's category list [id, has results, names]
 const C = D.config, OPS = C.ops.map(o => [o.id, o.en]), CAT = D.cat, CATS = D.cats;
-// placeholders in the category texts: {freq} {process} {sram}
-const fill = s => s.replace(/\{(freq|process|sram)\}/g, (_, k) => M[k]);
+// placeholders in the category texts: {process} {sram}
+const fill = s => s.replace(/\{(process|sram)\}/g, (_, k) => M[k]);
 const nf = (x, d = 0) => x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const nm = s => s.replace(/(\d)nm/g, '$1 nm');
@@ -261,10 +272,10 @@ const T = {
   zh: {
     brand: 'NGCC ASIC 排行榜', noResult: '暂无结果',
     disc: 'chipweaver 独立评估，非 ICCS 官方结果',
-    cond: ['性能优化版', M.process, `${M.freq} MHz`, `生成于 ${M.date}`],
+    cond: ['性能优化版', M.process, `生成于 ${M.date}`],
     ctaMethod: '评估方法 ↓', ctaData: '下载数据 →',
     level: '经典安全强度等级（比特）', viewTable: '表格', viewPareto: '帕累托图',
-    rank: '名次', alg: '算法', tput: '运算吞吐量', area: '面积', tpa: '吞面比', eff: '能效比',
+    rank: '名次', alg: '算法', freq: '工作<wbr>频率', tput: '运算吞吐量', area: '面积', tpa: '吞面比', eff: '能效比',
     ops: '核心操作', cycles: '时钟周期数', p95: 'P95', n: '样本数', lat: '运算延迟 ns', pw: '总功耗 mW',
     areaH: '综合后面积（kGE）', logic: '逻辑', sram: 'SRAM（CACTI 估算）', total: '合计',
     sizes: '尺寸（字节）', param: '参数集', others: '同等级其他参数集', impl: '查看实现 →',
@@ -278,10 +289,10 @@ const T = {
   en: {
     brand: 'NGCC ASIC Leaderboard', noResult: 'No results yet',
     disc: 'Independent evaluation by chipweaver; not an official ICCS result',
-    cond: ['Performance-optimized version', M.process, `${M.freq} MHz`, `generated ${M.date}`],
+    cond: ['Performance-optimized version', M.process, `generated ${M.date}`],
     ctaMethod: 'Methodology ↓', ctaData: 'Download data →',
     level: 'CLASSICAL SECURITY STRENGTH (BITS)', viewTable: 'TABLE', viewPareto: 'PARETO',
-    rank: 'Rank', alg: 'Algorithm', tput: 'Throughput', area: 'Area', tpa: 'Throughput / area', eff: 'Energy efficiency',
+    rank: 'Rank', alg: 'Algorithm', freq: 'Frequency', tput: 'Throughput', area: 'Area', tpa: 'Throughput / area', eff: 'Energy efficiency',
     ops: 'CORE OPERATIONS', cycles: 'Clock cycles', p95: 'P95', n: 'Samples', lat: 'Latency ns', pw: 'Total power mW',
     areaH: 'POST-SYNTHESIS AREA kGE', logic: 'Logic', sram: 'SRAM (CACTI estimate)', total: 'Total',
     sizes: 'SIZES bytes', param: 'PARAMETER SET', others: 'Other parameter sets at this level', impl: 'View implementation →',
@@ -354,7 +365,7 @@ function detail(r) {
   const L = t(), total = OPS.reduce((s, [k]) => s + r.cyc[k], 0);
   const share = OPS.map(([k], i) => `<i style="flex:${r.cyc[k] / total};background:var(--op${i + 1})" title="${esc(C.ops[i][lang])} ${nf(100 * r.cyc[k] / total)}%"></i>`).join('');
   const rows = OPS.map(([k], i) => `<tr><td><span class="key" style="background:var(--op${i + 1})"></span>${esc(C.ops[i][lang])}</td>
-      <td class="r num">${nf(Math.round(r.cyc[k]))}</td>${C.show_p95 ? `<td class="r num">${nf(Math.round(r.p95[k]))}</td><td class="r num">${nf(r.n[k])}</td>` : ''}<td class="r num">${nf(r.cyc[k] / M.freq * 1000)}</td>
+      <td class="r num">${nf(Math.round(r.cyc[k]))}</td>${C.show_p95 ? `<td class="r num">${nf(Math.round(r.p95[k]))}</td><td class="r num">${nf(r.n[k])}</td>` : ''}<td class="r num">${nf(r.cyc[k] / r.freq * 1000)}</td>
       <td class="r num">${r.power[k] == null ? '—' : nf(r.power[k], 1)}</td></tr>`).join('');
   const sz = C.sizes.filter(z => r.sizes[z.id] != null).map(z => `<div><dt>${esc(z[lang])}</dt><dd class="num">${nf(r.sizes[z.id])}</dd></div>`).join('');
   return `<div class="dgrid">
@@ -378,18 +389,21 @@ function table(frame) {
   const val = (r, k) => r[k] ?? -Infinity;
   const rows = data.slice().sort((a, b) => asc ? val(a, sortKey) - val(b, sortKey) : val(b, sortKey) - val(a, sortKey));
   const hasEff = data.some(r => r.eff != null);
-  const th = (key, label, unit, ascDefault, sortable = true) => !sortable
+  // soft hyphens let long English header words break on narrow screens
+  const shy = l => lang === 'en' ? l.replace(/Throughput/g, 'Through&shy;put').replace(/efficiency/g, 'effi&shy;ciency').replace(/Frequency/g, 'Fre&shy;quency') : l;
+  const th = (key, label, unit, ascDefault, sortable = true) => (label = shy(label), !sortable)
     ? `<th class="r">${label}<span class="u">${unit}</span></th>`
     : `<th class="r" data-key="${key}"${sortKey === key ? ` aria-sort="${asc ? 'ascending' : 'descending'}"` : ''}><button data-asc="${ascDefault ? 1 : ''}">${label}<span class="u">${unit}</span></button></th>`;
   frame.innerHTML = `<table><thead><tr><th class="c">${L.rank}</th><th>${L.alg}</th>
-      ${th('tput', L.tput, 'ops/s')}${th('kge', L.area, 'kGE', true)}${th('tpa', L.tpa, 'ops/s/kGE')}${th('eff', L.eff, 'ops/s/mW', false, hasEff)}<th class="chev"></th></tr></thead><tbody></tbody></table>`;
+      ${th('freq', L.freq, 'MHz')}${th('tput', L.tput, 'ops/s')}${th('kge', L.area, 'kGE', true)}${th('tpa', L.tpa, 'ops/s/kGE')}${th('eff', L.eff, 'ops/s/mW', false, hasEff)}<th class="chev"></th></tr></thead><tbody></tbody></table>`;
   const tb = frame.querySelector('tbody');
   for (const r of rows) {
     const id = r.alg, isOpen = open === id;
     const tr = document.createElement('tr');
     tr.className = 'row'; tr.tabIndex = 0; tr.setAttribute('aria-expanded', String(isOpen));
     tr.innerHTML = `<td class="rank c num">${r.rank}</td>
-      <td class="name">${esc(r.alg)}${r.short ? `<span class="ps">(${esc(r.short)})</span>` : ''}</td>
+      <td class="name">${esc(r.alg)}${r.short ? `<span class="ps">(${esc(r.short)})</span>` : ''}<span class="fq">${nf(r.freq)} MHz</span></td>
+      <td class="r num freq">${nf(r.freq)}</td>
       <td class="r"><div class="tp"><span class="v num" style="color:var(--fg)">${nf(r.tput)}</span><div class="bar"><i style="width:${(100 * r.tput / top).toFixed(1)}%"></i></div></div></td>
       <td class="r num">${nf(r.kge)}</td>
       <td class="r num">${nf(r.tpa, 1)}</td>
@@ -399,7 +413,7 @@ function table(frame) {
     tr.onclick = toggle;
     tr.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } };
     tb.appendChild(tr);
-    if (isOpen) { const d = document.createElement('tr'); d.className = 'detail'; d.innerHTML = `<td colspan="7">${detail(r)}</td>`; tb.appendChild(d); }
+    if (isOpen) { const d = document.createElement('tr'); d.className = 'detail'; d.innerHTML = `<td colspan="8">${detail(r)}</td>`; tb.appendChild(d); }
   }
   frame.querySelectorAll('th[data-key] button').forEach(b => b.onclick = () => {
     const k = b.parentElement.dataset.key;

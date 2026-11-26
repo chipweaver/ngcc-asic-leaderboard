@@ -8,7 +8,7 @@
 
 The NGCC ASIC Leaderboard compares **ASIC implementations of the candidate
 algorithms in the Next-generation Commercial Cryptographic Algorithms Program
-(NGCC) on throughput and area under a common process and clock frequency**, and
+(NGCC) on throughput and area under a common process and constraint set**, and
 publishes the RTL of every implementation it ranks.
 
 **This is an independent evaluation by chipweaver, not an official ICCS result.**
@@ -30,7 +30,7 @@ The leaderboard is published at <https://chipweaver.github.io/ngcc-asic-leaderbo
 | Category | Directory | Implementations |
 |---|---|---|
 | Digital Signature | — | No results yet |
-| Key Encapsulation | [`kem/`](kem/) | Aigis-Enc+, HARE, NEV, QUBE, ZEN (performance-optimized) |
+| Key Encapsulation | [`kem/`](kem/) | Aigis-Enc+, HARE, NEV, PolarLAC, QUBE, ZEN (performance-optimized) |
 | Key Exchange | — | No results yet |
 | Cryptographic Hash | — | No results yet |
 
@@ -39,17 +39,21 @@ The leaderboard is published at <https://chipweaver.github.io/ngcc-asic-leaderbo
 - Metric definitions follow the ICCS ASIC self-evaluation guide for
   next-generation commercial cryptographic algorithms (新一代商用密码算法 ASIC
   实现自评估指引, June 2026).
-- Performance-optimized versions, 90 nm process, 160 MHz clock. Every
-  implementation passes static timing analysis at that frequency.
-- **Throughput** is operations per second, from mean clock cycles. What counts as
-  one operation is defined per category in the methodology section of its page.
+- Performance-optimized versions, 90 nm process. All implementations use the
+  same synthesis constraint template and pass static timing analysis at their own
+  clock frequency.
+- **Throughput** is operations per second: the implementation's clock frequency
+  divided by the mean clock cycles of one operation. What counts as one operation
+  is defined per category in the methodology section of its page.
 - **Area** is post-synthesis logic area plus SRAM area, normalized to NAND2 gate
   equivalents (kGE). **Throughput / area** = throughput ÷ area.
 - Results are grouped by the NGCC classical security strength levels (128, 256
   and 512 bits, plus the optional 384 bits) and compared only within a level.
-- **Differences from the guide:** the clock is fixed at 160 MHz with no frequency
-  sweep, and SRAM area is a CACTI 90 nm estimate rather than a foundry memory
-  macro, so the numbers are comparable only within this leaderboard.
+- **Differences from the guide:** the clock frequency is the synthesis target, at
+  which each implementation's worst setup slack is close to 0 (at most 0.05 ns),
+  but no frequency sweep in 1–2 MHz steps was run; SRAM area is a CACTI 90 nm
+  estimate rather than a foundry memory macro. The numbers are therefore
+  comparable only within this leaderboard.
 
 ## Repository layout
 

@@ -1,0 +1,162 @@
+{
+  "algorithm": "PolarLAC",
+  "version": "performance",
+  "ngcc_round": 1,
+  "frequency_mhz": 120,
+  "conditions": {
+    "process": "90 nm",
+    "sram_model": "CACTI 90 nm"
+  },
+  "area_kge": {
+    "logic": 968.4,
+    "sram": 1030.2,
+    "total": 1998.7
+  },
+  "parameter_sets": [
+    {
+      "name": "PolarLAC-Light",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 530,
+        "sk": 1570,
+        "ct": 608,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1888.1,
+          "n": 122
+        },
+        "encaps": {
+          "mean": 2300.0,
+          "n": 129
+        },
+        "decaps": {
+          "mean": 3306.2,
+          "n": 132
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "PolarLAC-128",
+      "level": 128,
+      "sizes_bytes": {
+        "pk": 530,
+        "sk": 1570,
+        "ct": 640,
+        "ss": 16
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 1914.7,
+          "n": 122
+        },
+        "encaps": {
+          "mean": 2291.1,
+          "n": 129
+        },
+        "decaps": {
+          "mean": 3285.9,
+          "n": 132
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "PolarLAC-256",
+      "level": 256,
+      "sizes_bytes": {
+        "pk": 1060,
+        "sk": 3140,
+        "ct": 1280,
+        "ss": 32
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 3236.6,
+          "n": 126
+        },
+        "encaps": {
+          "mean": 4186.0,
+          "n": 131
+        },
+        "decaps": {
+          "mean": 6185.8,
+          "n": 136
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "PolarLAC-512",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2116,
+        "sk": 6276,
+        "ct": 2560,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 6798.1,
+          "n": 134
+        },
+        "encaps": {
+          "mean": 8380.9,
+          "n": 135
+        },
+        "decaps": {
+          "mean": 12071.1,
+          "n": 144
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    },
+    {
+      "name": "PolarLAC-512-Star",
+      "level": 512,
+      "sizes_bytes": {
+        "pk": 2522,
+        "sk": 6682,
+        "ct": 2970,
+        "ss": 64
+      },
+      "cycles": {
+        "keygen": {
+          "mean": 6752.3,
+          "n": 135
+        },
+        "encaps": {
+          "mean": 9511.7,
+          "n": 136
+        },
+        "decaps": {
+          "mean": 14274.4,
+          "n": 145
+        }
+      },
+      "power_mw": {
+        "keygen": null,
+        "encaps": null,
+        "decaps": null
+      }
+    }
+  ]
+}

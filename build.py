@@ -10,6 +10,7 @@ that redirects to the first category with results.
 """
 import base64
 import datetime
+import html
 import json
 import pathlib
 import sys
@@ -51,7 +52,8 @@ def load_category(cdir):
         r = json.loads(rf.read_text(encoding='utf-8'))
         where = str(rf.relative_to(ROOT))
         check(r.get('version') in VERSIONS, where, f"unknown version {r.get('version')!r}")
-        check(all(k in r.get('conditions', {}) for k in ('process', 'frequency_mhz', 'sram_model')), where, 'conditions incomplete')
+        check(all(k in r.get('conditions', {}) for k in ('process', 'sram_model')), where, 'conditions incomplete')
+        check(isinstance(r.get('frequency_mhz'), (int, float)) and r['frequency_mhz'] > 0, where, 'frequency_mhz missing')
         check(all(isinstance(r.get('area_kge', {}).get(k), (int, float)) for k in ('logic', 'sram', 'total')), where, 'area_kge incomplete')
         check((rf.parent / 'rtl').is_dir(), where, 'no rtl/ directory next to result.json')
         for p in r.get('parameter_sets', []):
@@ -67,6 +69,7 @@ def load_category(cdir):
                 check(s['id'] in p.get('sizes_bytes', {}), pw, f"sizes_bytes.{s['id']} missing")
         r['slug'] = rf.parent.name
         results.append(r)
+    # the evaluation conditions are common to all results; the clock frequency is each implementation's own
     conds = {json.dumps(r['conditions'], sort_keys=True) for r in results}
     check(len(conds) <= 1, cdir.name, 'results use different evaluation conditions')
     return cfg, results
@@ -74,10 +77,9 @@ def load_category(cdir):
 
 def board(cfg, results):
     """One row per (level, algorithm): the parameter set with the highest throughput."""
-    f_mhz = results[0]['conditions']['frequency_mhz']
     rows = []
     for r in results:
-        kge = r['area_kge']['total']
+        kge, f_mhz = r['area_kge']['total'], r['frequency_mhz']
         for p in r['parameter_sets']:
             if p['level'] not in cfg['levels']:
                 continue                       # declared at a level that is not an NGCC level: kept in data, not ranked
@@ -87,7 +89,7 @@ def board(cfg, results):
             rows.append(dict(
                 alg=r['algorithm'], slug=r['slug'], param=name, level=p['level'],
                 short='' if short == str(p['level']) else short,
-                tput=tput, kge=kge, tpa=tput / kge,
+                freq=f_mhz, tput=tput, kge=kge, tpa=tput / kge,
                 eff=None,    # 能效比 ops/s/mW: left empty until power is measured under the guide's conditions
                 cyc={o['id']: p['cycles'][o['id']]['mean'] for o in cfg['ops']},
                 p95={o['id']: p['cycles'][o['id']].get('p95') for o in cfg['ops']},
@@ -136,11 +138,11 @@ def main():
         cond = results[0]['conditions']
         payload = dict(
             cat=cid, cats=nav, repo=REPO_URL, config=cfg,
-            meta=dict(process=cond['process'], freq=cond['frequency_mhz'], sram=cond['sram_model'],
+            meta=dict(process=cond['process'], sram=cond['sram_model'],
                       date=today, algorithms=len({r['algorithm'] for r in results})),
             levels=board(cfg, results),
         )
-        page = template.replace('/*FONTS*/', font_css)
+        page = template.replace('/*FONTS*/', font_css).replace('/*TITLE*/', html.escape(cfg['text']['zh']['doc']))
         page = page.replace('/*DATA*/null', json.dumps(payload, ensure_ascii=False).replace('</', '<\\/'))
         out = OUT / cid
         out.mkdir(parents=True, exist_ok=True)

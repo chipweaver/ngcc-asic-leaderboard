@@ -57,11 +57,11 @@
       "title": [
         "密钥封装算法"
       ],
-      "tagline": "新一代商用密码算法征集活动（NGCC）密钥封装候选算法的 ASIC 实现，在统一工艺与工作频率下比较运算吞吐量和面积。",
+      "tagline": "新一代商用密码算法征集活动（NGCC）密钥封装候选算法的 ASIC 实现，在统一工艺与约束下比较运算吞吐量和面积。",
       "method": [
         [
           "运算吞吐量",
-          "单位时间内完成的运算次数（ops/s）。本榜将一次密钥生成、一次封装和一次解封装计为一次运算，对应一次使用临时密钥对的密钥建立：运算吞吐量 = f ÷（密钥生成、封装、解封装的平均时钟周期数之和），f = {freq} MHz。展开行列出各操作的时钟周期数和运算延迟，均为多次运行的平均值。"
+          "单位时间内完成的运算次数（ops/s）。本榜将一次密钥生成、一次封装和一次解封装计为一次运算，对应一次使用临时密钥对的密钥建立：运算吞吐量 = 工作频率 ÷（密钥生成、封装、解封装的平均时钟周期数之和），各实现的工作频率列于表中。展开行列出各操作的时钟周期数和运算延迟，均为多次运行的平均值。"
         ],
         [
           "面积与吞面比",
@@ -73,7 +73,7 @@
         ],
         [
           "评估环境",
-          "指标定义参照商用密码标准研究院《新一代商用密码算法 ASIC 实现自评估指引》（2026 年 6 月）。工艺为 {process}，各实现在 {freq} MHz 下均通过静态时序分析。与指引的差异：工作频率固定为 {freq} MHz，未进行频率扫描；SRAM 面积由 {sram} 估算，未使用工艺库存储宏单元。因此数值仅适用于本榜内部比较。"
+          "指标定义参照商用密码标准研究院《新一代商用密码算法 ASIC 实现自评估指引》（2026 年 6 月）。工艺为 {process}，各实现采用相同的综合约束模板，在各自的工作频率下通过静态时序分析。与指引的差异：工作频率为综合时设定的目标频率，各实现在该频率下的最差建立时间裕量接近 0（不超过 0.05 ns），但未按 1~2 MHz 步进进行频率扫描；SRAM 面积由 {sram} 估算，未使用工艺库存储宏单元。因此数值仅适用于本榜内部比较。"
         ]
       ]
     },
@@ -83,11 +83,11 @@
         "KEY",
         "ENCAPSULATION"
       ],
-      "tagline": "ASIC implementations of the key encapsulation candidates in the Next-generation Commercial Cryptographic Algorithms Program (NGCC), compared on throughput and area under a common process and clock frequency.",
+      "tagline": "ASIC implementations of the key encapsulation candidates in the Next-generation Commercial Cryptographic Algorithms Program (NGCC), compared on throughput and area under a common process and constraint set.",
       "method": [
         [
           "Throughput",
-          "Operations completed per second (ops/s). One operation here is one key generation, one encapsulation and one decapsulation, which together form one key establishment with an ephemeral key pair: throughput = f ÷ (sum of the mean clock cycles of KeyGen, Encaps and Decaps), with f = {freq} MHz. The expanded row lists per-operation clock cycles and latency, both averaged over repeated runs."
+          "Operations completed per second (ops/s). One operation here is one key generation, one encapsulation and one decapsulation, which together form one key establishment with an ephemeral key pair: throughput = clock frequency ÷ (sum of the mean clock cycles of KeyGen, Encaps and Decaps), using each implementation's own clock frequency, listed in the table. The expanded row lists per-operation clock cycles and latency, both averaged over repeated runs."
         ],
         [
           "Area and throughput / area",
@@ -99,7 +99,7 @@
         ],
         [
           "Evaluation environment",
-          "Metric definitions follow the ICCS ASIC self-evaluation guide for next-generation commercial cryptographic algorithms (新一代商用密码算法 ASIC 实现自评估指引, June 2026). Process: {process}; every implementation passes static timing analysis at {freq} MHz. Differences from the guide: the clock frequency is fixed at {freq} MHz with no frequency sweep, and SRAM area is a {sram} estimate rather than a foundry memory macro, so the numbers are comparable only within this leaderboard."
+          "Metric definitions follow the ICCS ASIC self-evaluation guide for next-generation commercial cryptographic algorithms (新一代商用密码算法 ASIC 实现自评估指引, June 2026). Process: {process}. All implementations use the same synthesis constraint template and pass static timing analysis at their own clock frequency. Differences from the guide: the clock frequency is the synthesis target, at which each implementation's worst setup slack is close to 0 (at most 0.05 ns), but no frequency sweep in 1–2 MHz steps was run; SRAM area is a {sram} estimate rather than a foundry memory macro. The numbers are therefore comparable only within this leaderboard."
         ]
       ]
     }
