@@ -285,7 +285,7 @@ const T = {
     areaH: '综合后面积（kGE）', logic: '逻辑', sram: 'SRAM（CACTI 估算）', total: '合计',
     sizes: '尺寸（字节）', param: '参数集', others: '同等级其他参数集', impl: '查看实现 →',
     better: '↖ 更优', xAxis: '面积 kGE →',
-    pnote: '横轴为面积，纵轴为运算吞吐量，均为对数坐标。阶梯线为帕累托前沿：前沿上的实现互不支配；阴影区域内的实现，至少被一个前沿上的实现在面积和运算吞吐量上同时超过。虚线上各点的吞面比相同，数字为吞面比（ops/s/kGE）。图的形式参照 GMU（乔治梅森大学）密码工程研究组的硬件评测。',
+    pnote: '双对数坐标。阶梯线为帕累托前沿；阴影区域内的每个实现，前沿上都有面积更小、运算吞吐量更高的实现。虚线为等吞面比线，数字为吞面比（ops/s/kGE）。',
     few: n => `该安全强度等级下仅有 ${n} 个实现，不绘制帕累托图。`,
     methodTitle: '评估方法',
     foot: `数据：<a href="data.json">data.json</a> · 生成于 ${M.date}`,
@@ -302,7 +302,7 @@ const T = {
     areaH: 'POST-SYNTHESIS AREA kGE', logic: 'Logic', sram: 'SRAM (CACTI estimate)', total: 'Total',
     sizes: 'SIZES bytes', param: 'PARAMETER SET', others: 'Other parameter sets at this level', impl: 'View implementation →',
     better: '↖ better', xAxis: 'Area kGE →',
-    pnote: 'Area on the horizontal axis and throughput on the vertical axis, both on log scales. The staircase is the Pareto front: implementations on it do not dominate one another, and each implementation in the shaded region is beaten on both area and throughput by at least one implementation on the front. Points on a dashed line have the same throughput / area, given in ops/s/kGE. The chart follows the hardware benchmarking of the GMU Cryptographic Engineering Research Group.',
+    pnote: 'Log–log axes. The staircase is the Pareto front; for each implementation in the shaded region, one on the front has smaller area and higher throughput. Dashed lines join points of equal throughput / area, labelled in ops/s/kGE.',
     few: n => `Only ${n} implementation${n > 1 ? 's' : ''} at this security strength; no Pareto plot.`,
     methodTitle: 'Methodology',
     foot: `Data: <a href="data.json">data.json</a> · generated ${M.date}`,
@@ -464,7 +464,7 @@ function pareto(frame) {
   for (const v of gy) s += `<line class="grid" x1="${Lm}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${Lm - 10}" y="${Y(v) + 4}" text-anchor="end">${kfmt(v)}</text>`;
   s += `<line class="base" x1="${Lm}" x2="${x1}" y1="${y1}" y2="${y1}"/>`;
   for (const v of gx) s += `<line class="tick" x1="${X(v)}" x2="${X(v)}" y1="${y1}" y2="${y1 + 5}"/><text x="${X(v)}" y="${y1 + 20}" text-anchor="middle">${nf(v)}</text>`;
-  s += `<text x="${x1}" y="${H - 6}" text-anchor="end">${L.xAxis}</text><text x="${Lm - 10}" y="${Tm - 20}" text-anchor="end">ops/s</text>`;
+  s += `<text x="${x1}" y="${H - 6}" text-anchor="end">${L.xAxis}</text><text x="0" y="${Tm - 20}">${L.tput} ops/s</text>`;
   s += `<text class="note" x="${Lm + 10}" y="${Tm + 16}">${L.better}</text>`;
   // label boxes already taken (points, iso-line labels) for the collision test of the point labels
   const P = pts.map(p => ({ p, x: X(p.kge), y: Y(p.tput) }));
