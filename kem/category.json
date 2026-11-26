@@ -61,11 +61,11 @@
       "method": [
         [
           "运算吞吐量",
-          "一次密钥生成、一次封装和一次解封装计为一次运算，对应一次使用临时密钥对的密钥建立。运算吞吐量 = 工作频率 ÷ 三者的平均时钟周期数之和。时钟周期数取多次运行的平均值。"
+          "运算吞吐量为单位时间内完成的运算次数（ops/s）。一次密钥生成、一次封装和一次解封装计为一次运算，对应一次使用临时密钥对的密钥建立。运算吞吐量 = 工作频率 ÷ 三者的平均时钟周期数之和；运算延迟 = 时钟周期数 ÷ 工作频率。时钟周期数取多次运行的平均值。"
         ],
         [
-          "面积与吞面比",
-          "面积为综合后逻辑面积与 SRAM 面积之和，按 NAND2 等效门数计（kGE）。吞面比 = 运算吞吐量 ÷ 面积。"
+          "面积、吞面比与能效比",
+          "面积为综合后逻辑面积与 SRAM 面积之和，以 NAND2 等效门数表示，即面积除以工艺库二输入与非门（NAND2）的面积，单位 kGE（千门）。吞面比 = 运算吞吐量 ÷ 面积。能效比 = 运算吞吐量 ÷ 总功耗。"
         ],
         [
           "分组与排名",
@@ -87,11 +87,11 @@
       "method": [
         [
           "Throughput",
-          "One key generation, one encapsulation and one decapsulation count as one operation, which corresponds to one key establishment with an ephemeral key pair. Throughput = clock frequency ÷ the sum of their mean clock cycles. Clock cycles are averaged over repeated runs."
+          "Throughput is the number of operations completed per second (ops/s). One key generation, one encapsulation and one decapsulation count as one operation, which corresponds to one key establishment with an ephemeral key pair. Throughput = clock frequency ÷ the sum of their mean clock cycles; latency = clock cycles ÷ clock frequency. Clock cycles are averaged over repeated runs."
         ],
         [
-          "Area and throughput / area",
-          "Area is post-synthesis logic area plus SRAM area, in NAND2 gate equivalents (kGE). Throughput / area = throughput ÷ area."
+          "Area, throughput / area and energy efficiency",
+          "Area is post-synthesis logic area plus SRAM area, in NAND2 gate equivalents: area divided by the area of the library's two-input NAND gate, in kGE (thousands of gates). Throughput / area = throughput ÷ area. Energy efficiency = throughput ÷ total power."
         ],
         [
           "Grouping and ranking",

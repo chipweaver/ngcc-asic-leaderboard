@@ -42,11 +42,13 @@ The leaderboard is published at <https://chipweaver.github.io/ngcc-asic-leaderbo
 - Performance-optimized versions, 90 nm process. All implementations use the
   same synthesis constraint template and pass static timing analysis at their own
   clock frequency.
-- **Throughput** = clock frequency ÷ mean clock cycles of one operation (ops/s).
-  What counts as one operation is defined per category in the methodology
-  section of its page.
-- **Area** is post-synthesis logic area plus SRAM area, normalized to NAND2 gate
-  equivalents (kGE). **Throughput / area** = throughput ÷ area.
+- **Throughput** is the number of operations completed per second (ops/s):
+  clock frequency ÷ mean clock cycles of one operation. What counts as one
+  operation is defined per category in the methodology section of its page.
+- **Area** is post-synthesis logic area plus SRAM area, in NAND2 gate
+  equivalents: area divided by the area of the library's two-input NAND gate, in
+  kGE (thousands of gates). **Throughput / area** = throughput ÷ area. **Energy
+  efficiency** = throughput ÷ total power.
 - Results are grouped by the NGCC classical security strength levels (128, 256
   and 512 bits, plus the optional 384 bits) and compared only within a level.
 - **Differences from the guide:** the clock frequency is the synthesis target
