@@ -13,7 +13,7 @@
 :root {
   color-scheme: light;
   --bg: #ffffff; --fg: #09090b; --fg-2: #3f3f46; --muted: #71717b;
-  --border: #e4e4e7; --soft: #f4f4f5; --hover: #fafafa;
+  --border: #e4e4e7; --soft: #f4f4f5; --hover: #fafafa; --dom: #f8f8f9;
   --dim: #a1a1aa; --op1: #18181b; --op2: #71717b; --op3: #d4d4d8;
   --mono: "Fragment Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", monospace;
   --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
@@ -22,14 +22,14 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #09090b; --fg: #fafafa; --fg-2: #d4d4d8; --muted: #9f9fa9;
-    --border: #2e2e2e; --soft: #27272a; --hover: #131316;
+    --border: #2e2e2e; --soft: #27272a; --hover: #131316; --dom: #141417;
     --dim: #52525c; --op1: #fafafa; --op2: #9f9fa9; --op3: #52525c;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #09090b; --fg: #fafafa; --fg-2: #d4d4d8; --muted: #9f9fa9;
-  --border: #2e2e2e; --soft: #27272a; --hover: #131316;
+  --border: #2e2e2e; --soft: #27272a; --hover: #131316; --dom: #141417;
   --dim: #52525c; --op1: #fafafa; --op2: #9f9fa9; --op3: #52525c;
 }
 
@@ -136,7 +136,12 @@ tr.detail > td { height: auto; padding: 6px 16px 26px 96px; background: var(--ho
 .pareto text { font-family: var(--mono); fill: var(--muted); font-size: 12px; }
 .pareto .grid { stroke: var(--border); }
 .pareto .base { stroke: var(--dim); }
-.pareto .front { stroke: var(--fg); stroke-width: 1.5; fill: none; }
+.pareto .front { stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linejoin: miter; }
+.pareto .dom { fill: var(--dom); }
+.pareto text.lab, .pareto text.isol, .pareto text.note { paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round; }
+.pareto .tick { stroke: var(--dim); }
+.pareto .iso { stroke: var(--dim); stroke-width: 1; stroke-dasharray: 3 4; }
+.pareto .isol { fill: var(--muted); font-size: 11px; }
 .pareto .pt { stroke: var(--bg); stroke-width: 2; }
 .pareto .pt.on { fill: var(--fg); }
 .pareto .pt.off { fill: var(--dim); }
@@ -280,7 +285,7 @@ const T = {
     areaH: '综合后面积（kGE）', logic: '逻辑', sram: 'SRAM（CACTI 估算）', total: '合计',
     sizes: '尺寸（字节）', param: '参数集', others: '同等级其他参数集', impl: '查看实现 →',
     better: '↖ 更优', xAxis: '面积 kGE →',
-    pnote: '左上方为更优。实线连接帕累托前沿上的实现，即不存在面积更小且运算吞吐量更高的其他实现。',
+    pnote: '横轴为面积，纵轴为运算吞吐量，均为对数坐标。阶梯线为帕累托前沿：前沿上的实现互不支配；阴影区域内的实现，至少被一个前沿上的实现在面积和运算吞吐量上同时超过。虚线上各点的吞面比相同，数字为吞面比（ops/s/kGE）。图的形式参照 GMU（乔治梅森大学）密码工程研究组的硬件评测。',
     few: n => `该安全强度等级下仅有 ${n} 个实现，不绘制帕累托图。`,
     methodTitle: '评估方法',
     foot: `数据：<a href="data.json">data.json</a> · 生成于 ${M.date}`,
@@ -297,7 +302,7 @@ const T = {
     areaH: 'POST-SYNTHESIS AREA kGE', logic: 'Logic', sram: 'SRAM (CACTI estimate)', total: 'Total',
     sizes: 'SIZES bytes', param: 'PARAMETER SET', others: 'Other parameter sets at this level', impl: 'View implementation →',
     better: '↖ better', xAxis: 'Area kGE →',
-    pnote: 'Upper left is better. The line connects the implementations on the Pareto front: for each of them, no other implementation has both smaller area and higher throughput.',
+    pnote: 'Area on the horizontal axis and throughput on the vertical axis, both on log scales. The staircase is the Pareto front: implementations on it do not dominate one another, and each implementation in the shaded region is beaten on both area and throughput by at least one implementation on the front. Points on a dashed line have the same throughput / area, given in ops/s/kGE. The chart follows the hardware benchmarking of the GMU Cryptographic Engineering Research Group.',
     few: n => `Only ${n} implementation${n > 1 ? 's' : ''} at this security strength; no Pareto plot.`,
     methodTitle: 'Methodology',
     foot: `Data: <a href="data.json">data.json</a> · generated ${M.date}`,
@@ -423,49 +428,88 @@ function table(frame) {
 }
 
 /* ---------- pareto ---------- */
-function ticks(lo, hi, n) {
-  const raw = (hi - lo) / n, mag = 10 ** Math.floor(Math.log10(raw));
-  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
-  const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step;
-  return { a, b, t: Array.from({ length: Math.round((b - a) / step) + 1 }, (_, i) => a + i * step) };
+// log-scale ticks: the sparsest "nice" mantissa set that gives at least `min` ticks inside [lo, hi]
+function lticks(lo, hi, min, max) {
+  const sets = [[1], [1, 2, 5], [1, 2, 3, 5], [1, 1.5, 2, 3, 4, 5, 7], [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8]];
+  let t = [];
+  for (const m of sets) {
+    t = [];
+    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++)
+      for (const k of m) { const v = k * 10 ** e; if (v >= lo && v <= hi) t.push(+v.toPrecision(3)); }
+    if (t.length >= min) break;
+  }
+  while (t.length > max) t = t.filter((_, i) => i % 2 === 0);
+  return t;
 }
-const kfmt = v => v >= 1000 ? `${nf(v / 1000)}K` : nf(v);
+const kfmt = v => v >= 1000 ? `${nf(v / 1000, v % 1000 ? 1 : 0)}K` : nf(v);
 
 function pareto(frame) {
   const L = t(), pts = D.levels[level];
   if (pts.length < 3) { frame.innerHTML = `<div class="empty">${L.few(pts.length)}</div>`; return; }
   frame.innerHTML = `<div class="pareto"><svg role="img" aria-label="Pareto"></svg><div class="tip"></div><p class="pnote">${L.pnote}</p></div>`;
   const box = frame.querySelector('.pareto'), svg = box.querySelector('svg'), tip = box.querySelector('.tip');
-  const W = svg.clientWidth || 1100, H = W < 520 ? 280 : 420;
-  const Lm = 56, R = 20, Tm = 36, B = 46;
+  const W = svg.clientWidth || 1100, narrow = W < 520, H = narrow ? 300 : 440;
+  const Lm = 56, R = 20, Tm = 36, B = 46, x1 = W - R, y1 = H - B;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('height', H);
-  const xs = pts.map(p => p.kge), ys = pts.map(p => p.tput);
-  const xr = Math.max(...xs) - Math.min(...xs) || Math.max(...xs);
-  const gx = ticks(Math.max(0, Math.min(...xs) - xr * .18), Math.max(...xs) + xr * .18, W < 520 ? 3 : 6);
-  const gy = ticks(0, Math.max(...ys) * 1.12, 4);
-  const X = v => Lm + (v - gx.a) / (gx.b - gx.a) * (W - Lm - R);
-  const Y = v => H - B - (v - gy.a) / (gy.b - gy.a) * (H - Tm - B);
-  let s = '';
-  for (const v of gy.t) s += `<line class="${v === 0 ? 'base' : 'grid'}" x1="${Lm}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${Lm - 10}" y="${Y(v) + 4}" text-anchor="end">${kfmt(v)}</text>`;
-  for (const v of gx.t) s += `<text x="${X(v)}" y="${H - B + 20}" text-anchor="middle">${nf(v)}</text>`;
-  s += `<text x="${W - R}" y="${H - 6}" text-anchor="end">${L.xAxis}</text><text x="${Lm - 10}" y="${Tm - 20}" text-anchor="end">ops/s</text>`;
-  s += `<text x="${Lm + 10}" y="${Tm + 16}">${L.better}</text>`;
-  const front = pts.slice().sort((a, b) => a.kge - b.kge)
-    .reduce((f, p) => (!f.length || p.tput > f[f.length - 1].tput) ? [...f, p] : f, []);
-  if (front.length > 1) s += `<polyline class="front" points="${front.map(p => `${X(p.kge)},${Y(p.tput)}`).join(' ')}"/>`;
-  // labels: first spot that clears the other points, placed labels and plot edges; else the least crowded one
-  const P = pts.map(p => ({ p, x: X(p.kge), y: Y(p.tput), on: front.includes(p) }));
+  // log-log domain padded by a share of each axis' span in decades
+  const dom = (vs, padMin) => {
+    const a = Math.log10(Math.min(...vs)), b = Math.log10(Math.max(...vs)), p = Math.max((b - a) * .12, padMin);
+    return [a - p, b + p];
+  };
+  const [xa, xb] = dom(pts.map(p => p.kge), .05), [ya, yb] = dom(pts.map(p => p.tput), .08);
+  const X = v => Lm + (Math.log10(v) - xa) / (xb - xa) * (x1 - Lm);
+  const Y = v => y1 - (Math.log10(v) - ya) / (yb - ya) * (y1 - Tm);
+  const gx = lticks(10 ** xa, 10 ** xb, narrow ? 2 : 3, narrow ? 4 : 7), gy = lticks(10 ** ya, 10 ** yb, 3, 6);
+  let s = `<defs><clipPath id="plot"><rect x="${Lm}" y="${Tm}" width="${x1 - Lm}" height="${y1 - Tm}"/></clipPath></defs><!--DOM-->`;
+  for (const v of gy) s += `<line class="grid" x1="${Lm}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${Lm - 10}" y="${Y(v) + 4}" text-anchor="end">${kfmt(v)}</text>`;
+  s += `<line class="base" x1="${Lm}" x2="${x1}" y1="${y1}" y2="${y1}"/>`;
+  for (const v of gx) s += `<line class="tick" x1="${X(v)}" x2="${X(v)}" y1="${y1}" y2="${y1 + 5}"/><text x="${X(v)}" y="${y1 + 20}" text-anchor="middle">${nf(v)}</text>`;
+  s += `<text x="${x1}" y="${H - 6}" text-anchor="end">${L.xAxis}</text><text x="${Lm - 10}" y="${Tm - 20}" text-anchor="end">ops/s</text>`;
+  s += `<text class="note" x="${Lm + 10}" y="${Tm + 16}">${L.better}</text>`;
+  // label boxes already taken (points, iso-line labels) for the collision test of the point labels
+  const P = pts.map(p => ({ p, x: X(p.kge), y: Y(p.tput) }));
   const boxes = P.map(q => ({ x0: q.x - 8, x1: q.x + 8, y0: q.y - 8, y1: q.y + 8 }));
+  // equal throughput / area lines (slope 1 in log-log), at 1-2-5 values crossing the plot
+  const rlo = 10 ** ya / 10 ** xb, rhi = 10 ** yb / 10 ** xa;
+  let rs = [];
+  for (let e = Math.floor(Math.log10(rlo)); e <= Math.ceil(Math.log10(rhi)); e++)
+    for (const k of [1, 2, 5]) { const r = +(k * 10 ** e).toPrecision(2); if (r > rlo && r < rhi) rs.push(r); }
+  while (rs.length > 4) rs = rs.filter((_, i) => i % 2 === 1);
+  let iso = '';
+  for (const r of rs) {
+    // the line enters at the left or bottom edge and leaves at the top or right edge
+    const xin = Math.max(10 ** xa, 10 ** ya / r), xout = Math.min(10 ** xb, 10 ** yb / r);
+    if (xout <= xin) continue;
+    iso += `<line class="iso" x1="${X(xin)}" y1="${Y(xin * r)}" x2="${X(xout)}" y2="${Y(xout * r)}"/>`;
+    const top = xout < 10 ** xb, lx = X(xout) + (top ? 4 : -4), ly = top ? Tm + 11 : Y(xout * r) - 6, txt = nf(r, r < 1 ? 1 : 0);
+    const w = txt.length * 7;
+    iso += `<text class="isol" x="${lx}" y="${ly}" text-anchor="${top ? 'start' : 'end'}">${txt}</text>`;
+    boxes.push(top ? { x0: lx, x1: lx + w, y0: ly - 10, y1: ly + 2 } : { x0: lx - w, x1: lx, y0: ly - 10, y1: ly + 2 });
+  }
+  s += `<g clip-path="url(#plot)">`;
+  // Pareto front as a staircase: everything right of and below it is dominated (shaded)
+  const front = pts.slice().sort((a, b) => a.kge - b.kge || b.tput - a.tput)
+    .reduce((f, p) => (!f.length || p.tput > f[f.length - 1].tput) ? [...f, p] : f, []);
+  const st = [];
+  front.forEach((p, i) => { if (i) st.push([X(p.kge), Y(front[i - 1].tput)]); st.push([X(p.kge), Y(p.tput)]); });
+  const last = st[st.length - 1];
+  // the dominated region goes under the grid; the iso lines and the staircase above it
+  s = s.replace('<!--DOM-->', `<path class="dom" clip-path="url(#plot)" d="M${st[0][0]},${y1} ${st.map(q => `L${q[0]},${q[1]}`).join(' ')} L${x1},${last[1]} L${x1},${y1} Z"/>`) + iso;
+  // keep point labels off the staircase segments
+  st.slice(1).forEach((q, i) => { const a = st[i]; boxes.push({ x0: Math.min(a[0], q[0]) - 1, x1: Math.max(a[0], q[0]) + 1, y0: Math.min(a[1], q[1]) - 1, y1: Math.max(a[1], q[1]) + 1 }); });
+  s += `<path class="front" d="M${st.map(q => q.join(',')).join(' L')}"/></g>`;
+  // labels: first spot that clears the other points, placed labels and plot edges; else the least crowded one
   const hit = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
   const spots = [[0, 24, 'middle'], [0, -14, 'middle'], [13, 4, 'start'], [-13, 4, 'end'], [10, 20, 'start'], [-10, 20, 'end'], [10, -10, 'start'], [-10, -10, 'end']];
   P.forEach((q, i) => {
+    q.on = front.includes(q.p);
     s += `<circle class="pt ${q.on ? 'on' : 'off'}" cx="${q.x}" cy="${q.y}" r="${q.on ? 6 : 5}"/>`;
     const w = [...q.p.alg].length * 7.8, h = 14;
     let pick = null, best = Infinity;
     for (const sp of spots) {
       const x0 = sp[2] === 'middle' ? q.x + sp[0] - w / 2 : sp[2] === 'start' ? q.x + sp[0] : q.x + sp[0] - w;
       const bb = { x0, x1: x0 + w, y0: q.y + sp[1] - h + 3, y1: q.y + sp[1] + 3 };
-      const n = boxes.filter((b, j) => j !== i && hit(b, bb)).length + (bb.x0 >= Lm && bb.x1 <= W - R && bb.y0 >= Tm - 4 && bb.y1 <= H - B ? 0 : 10);
+      const n = boxes.filter((b, j) => j !== i && hit(b, bb)).length + (bb.x0 >= Lm && bb.x1 <= x1 && bb.y0 >= Tm - 4 && bb.y1 <= y1 ? 0 : 10);
       if (n < best) { best = n; pick = [sp, bb]; }
       if (n === 0) break;
     }
@@ -477,7 +521,7 @@ function pareto(frame) {
   svg.querySelectorAll('.hit').forEach(c => {
     c.onpointerenter = () => {
       const p = pts[+c.dataset.i];
-      tip.innerHTML = `<b>${esc(p.alg)}${p.short ? ` (${esc(p.short)})` : ''}</b><span>${nf(p.tput)} ops/s · ${nf(p.kge)} kGE</span>`;
+      tip.innerHTML = `<b>${esc(p.alg)}${p.short ? ` (${esc(p.short)})` : ''}</b><span>${nf(p.tput)} ops/s · ${nf(p.kge)} kGE · ${nf(p.tpa, 1)} ops/s/kGE</span>`;
       const bx = box.getBoundingClientRect(), sx = svg.getBoundingClientRect();
       const px = +c.getAttribute('cx') + sx.left - bx.left, py = +c.getAttribute('cy') + sx.top - bx.top;
       tip.style.left = Math.max(8, Math.min(px + 14, bx.width - tip.offsetWidth - 8)) + 'px';
